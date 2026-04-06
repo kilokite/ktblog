@@ -1,0 +1,10 @@
+packages:
+  - server
+  - render
+  - console
+  - share_assets
+
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - esbuild
+  - prisma
