@@ -1,7 +1,10 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import { TOKEN } from '../middleware/auth.js'
+import { prisma } from '../lib/prisma.js'
+import { verifyPassword, generateToken, hashToken } from '../lib/crypto.js'
+import { userPublicSelect } from '../lib/select.js'
+import { inc } from '../lib/stats.js'
 
 const auth = new Hono()
   .post('/login',
@@ -9,12 +12,27 @@ const auth = new Hono()
       username: z.string(),
       password: z.string(),
     })),
-    (c) => {
+    async (c) => {
       const { username, password } = c.req.valid('json')
-      if (username !== 'admin' || password !== 'admin') {
+      const user = await prisma.user.findUnique({
+        where: { username },
+        select: { passwordHash: true, ...userPublicSelect },
+      })
+      if (!user || !verifyPassword(password, user.passwordHash)) {
+        inc('auth_fail')
         return c.json({ success: false as const })
       }
-      return c.json({ success: true as const, token: TOKEN })
+      inc('auth_login')
+      const token = generateToken()
+      await prisma.authToken.create({
+        data: { tokenHash: hashToken(token), userId: user.id },
+      })
+      const { passwordHash: _, ...publicUser } = user
+      return c.json({
+        success: true as const,
+        token,
+        user: publicUser,
+      })
     }
   )
 

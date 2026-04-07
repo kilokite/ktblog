@@ -25,7 +25,7 @@ const login = async () => {
     const res = await api.auth.login.$post({ json: { username: username.value, password: password.value } });
     const data = await res.json();
     if (data.success) {
-        useMainStore().token = '123';
+        useMainStore().setToken(data.token);
     } else {
         alert('Login failed');
     }

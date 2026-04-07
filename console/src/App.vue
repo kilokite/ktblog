@@ -6,6 +6,9 @@ const route = useRoute();
 
 const menus = [
 	{ title: "首页", icon: "mdi-home", to: "/" },
+	{ title: "文章管理", icon: "mdi-post-outline", to: "/posts" },
+	{ title: "分类与标签", icon: "mdi-tag-outline", to: "/taxonomy" },
+	{ title: "站点设置", icon: "mdi-cog", to: "/setting" },
 	{ title: "关于", icon: "mdi-information", to: "/about" },
 ];
 

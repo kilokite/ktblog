@@ -11,3 +11,149 @@ generator client {
 datasource db {
   provider = "mysql"
 }
+
+enum UserType {
+  ADMIN
+  AUTHOR
+  READER
+}
+
+model User {
+  id           String   @id @default(cuid())
+  userType     UserType @default(READER) @map("user_type")
+  username     String   @unique @db.VarChar(64)
+  email        String   @unique @db.VarChar(128)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  displayName  String?  @map("display_name") @db.VarChar(128)
+  avatarUrl    String?  @map("avatar_url") @db.VarChar(512)
+  bio          String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  authTokens AuthToken[]
+  posts      Post[]
+
+  @@map("users")
+}
+
+/// 非 JWT：opaque token 与用户绑定（见项目 AGENT.md）
+model AuthToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique @map("token_hash") @db.VarChar(64)
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("auth_tokens")
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  title       String    @db.VarChar(255)
+  slug        String    @unique @db.VarChar(255)
+  content     String    @db.LongText
+  summary     String?   @db.VarChar(512)
+  coverUrl    String?   @map("cover_url") @db.VarChar(512)
+  published   Boolean   @default(false)
+  publishedAt DateTime? @map("published_at")
+  authorId    String    @map("author_id")
+  author      User      @relation(fields: [authorId], references: [id])
+  categoryId  String?   @map("category_id")
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  seriesId    String?   @map("series_id")
+  series      Series?   @relation(fields: [seriesId], references: [id], onDelete: SetNull)
+  seriesOrder Int?      @map("series_order")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  tags      PostTag[]
+  comments  Comment[]
+  reactions Reaction[]
+
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([seriesId])
+  @@index([published, publishedAt])
+  @@map("posts")
+}
+
+// ── 分类 & 标签 ──────────────────────────────────
+
+model Category {
+  id    String @id @default(cuid())
+  name  String @unique @db.VarChar(64)
+  slug  String @unique @db.VarChar(64)
+  posts Post[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id    String    @id @default(cuid())
+  name  String    @unique @db.VarChar(64)
+  slug  String    @unique @db.VarChar(64)
+  posts PostTag[]
+
+  @@map("tags")
+}
+
+model PostTag {
+  postId String @map("post_id")
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tagId  String @map("tag_id")
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@map("post_tags")
+}
+
+// ── 系列 ─────────────────────────────────────────
+
+model Series {
+  id          String  @id @default(cuid())
+  title       String  @db.VarChar(255)
+  slug        String  @unique @db.VarChar(255)
+  description String? @db.VarChar(512)
+  posts       Post[]
+
+  @@map("series")
+}
+
+// ── 评论 & 互动 ──────────────────────────────────
+
+model Comment {
+  id        String    @id @default(cuid())
+  name      String    @db.VarChar(64)
+  email     String?   @db.VarChar(128)
+  website   String?   @db.VarChar(512)
+  content   String    @db.Text
+  postId    String    @map("post_id")
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parentId  String?   @map("parent_id")
+  parent    Comment?  @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Comment[] @relation("CommentThread")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([postId])
+  @@index([parentId])
+  @@map("comments")
+}
+
+model Reaction {
+  postId    String   @map("post_id")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  visitorId String   @map("visitor_id") @db.VarChar(36)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([postId, visitorId])
+  @@map("reactions")
+}
+
+// ── 站点配置 ─────────────────────────────────────
+
+model SiteConfig {
+  id   Int  @id @default(1)
+  data Json
+
+  @@map("site_config")
+}

@@ -10,10 +10,12 @@ if (import.meta.env.DEV) {
 }
 
 export const api = hc<ApiType>(baseUrl, {
-  fetch: (input, init) => {
+  fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
     const store = useMainStore()
     const headers = new Headers(init?.headers)
     if (store.token) headers.set('Authorization', `Bearer ${store.token}`)
-    return fetch(input, { ...init, headers })
+    const res = await fetch(input, { ...init, headers })
+    if (res.status === 401) store.setToken(null)
+    return res
   }
 })

@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
+    "deploy": "prisma migrate deploy",
     "start": "node dist/index.js"
   },
   "dependencies": {
