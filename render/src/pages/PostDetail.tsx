@@ -1,6 +1,9 @@
-import { createResource, Show, Suspense } from 'solid-js'
-import { useParams, A } from '@solidjs/router'
+import { createResource, For, Show, Suspense } from 'solid-js'
+import { useParams } from '@solidjs/router'
 import { useApi } from '../lib/api'
+import { fmtDate } from '../lib/utils'
+import Sidebar from '../components/sidebar/Sidebar'
+import './PostDetail.scss'
 
 export default function PostDetail() {
   const params = useParams<{ slug: string }>()
@@ -17,27 +20,55 @@ export default function PostDetail() {
 
   return (
     <>
-      <header class="detail-header">
-        <A href="/">Kilokite Blog</A>
-      </header>
-      <main class="detail-main">
+      <div class="detail-page">
         <Suspense fallback={<p class="loading">Loading…</p>}>
-          <Show when={post()} fallback={<p>Post not found.</p>}>
-            {(p) => (
-              <article class="post-detail">
-                <h1>{p().title}</h1>
-                <div class="meta">
-                  <span>{p().author?.displayName}</span>
-                  <time>
-                    {new Date(p().publishedAt ?? p().createdAt).toLocaleDateString()}
-                  </time>
-                </div>
-                <div class="content" innerHTML={p().content} />
-              </article>
-            )}
+          <Show when={post()} fallback={<p class="loading">Post not found.</p>}>
+            {(p) => {
+              const data = p()
+              const dateStr = fmtDate(data.publishedAt ?? data.createdAt)
+              return (
+                <section class="detail-grid">
+                  <main class="detail-article">
+                    <header class="article-header">
+                      <div class="article-meta">
+                        <Show when={data.category}>
+                          {(cat) => <span class="article-category">#{cat().name}</span>}
+                        </Show>
+                        <Show when={data.tags?.length}>
+                          <For each={data.tags}>
+                            {(t) => <span class="article-tag">#{t.tag.name}</span>}
+                          </For>
+                        </Show>
+                        <Show when={data.author}>
+                        {(author) => (
+                          <div class="article-author">
+                            <span class="author-name">{author().displayName}</span>
+                          </div>
+                        )}
+                      </Show>
+                        <span class="article-date">{dateStr}</span>
+                      </div>
+                      <h1 class="article-title">{data.title}</h1>
+                    </header>
+
+                    <Show when={data.coverUrl}>
+                      {(url) => (
+                        <figure class="article-cover">
+                          <img src={url()} alt="" />
+                        </figure>
+                      )}
+                    </Show>
+
+                    <div class="article-body" innerHTML={data.content} />
+                  </main>
+
+                  <Sidebar />
+                </section>
+              )
+            }}
           </Show>
         </Suspense>
-      </main>
+      </div>
     </>
   )
 }

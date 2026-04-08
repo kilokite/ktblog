@@ -1,0 +1,47 @@
+.link-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  color: #fff;
+
+  .link-card-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    flex-shrink: 0;
+  }
+
+  .link-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .link-card-title {
+    font-family: var(--heading);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.33;
+  }
+
+  .link-card-desc {
+    font-family: 'Inter', var(--sans);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.25;
+    opacity: 0.8;
+  }
+
+  @media (max-width: 1024px) {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  @media (max-width: 640px) {
+    min-width: 0;
+  }
+}

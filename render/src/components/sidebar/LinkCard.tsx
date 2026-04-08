@@ -1,3 +1,5 @@
+import './LinkCard.scss'
+
 export default function LinkCard(props: {
   title: string
   description: string

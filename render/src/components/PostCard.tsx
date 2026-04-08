@@ -1,5 +1,7 @@
 import { Show } from 'solid-js'
 import { A } from '@solidjs/router'
+import { fmtDate } from '../lib/utils'
+import './PostCard.scss'
 
 export type PostCardData = {
   slug: string
@@ -12,29 +14,16 @@ export type PostCardData = {
   tags?: { tag: { name: string } }[]
 }
 
-function fmtDate(raw: string) {
-  const d = new Date(raw)
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y} / ${m} / ${day}`
-}
-
 export default function PostCard(props: { post: PostCardData }) {
   return (
     <A href={`/post/${props.post.slug}`} class="post-card">
       <div class="post-card-body">
         <div class="post-card-meta">
-          <Show when={props.post.category}>
-            {(cat) => (
-              <span class="post-category">
-                <span class="cat-dot" />
-                {cat().name}
-              </span>
-            )}
-          </Show>
           <Show when={props.post.tags?.[0]}>
             {(t) => <span class="post-tag">#{t().tag.name}</span>}
+          </Show>
+          <Show when={!props.post.tags?.[0] && props.post.category}>
+            {(cat) => <span class="post-category">#{cat().name}</span>}
           </Show>
           <span class="post-date">
             {fmtDate(props.post.publishedAt ?? props.post.createdAt)}
