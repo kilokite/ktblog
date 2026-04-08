@@ -16,21 +16,28 @@ export default function PostDetail() {
   )
 
   return (
-    <Suspense fallback={<p class="loading">Loading…</p>}>
-      <Show when={post()} fallback={<p>Post not found.</p>}>
-        {(p) => (
-          <article class="post-detail">
-            <h1>{p().title}</h1>
-            <div class="meta">
-              <span>{p().author?.displayName}</span>
-              <time>
-                {new Date(p().publishedAt ?? p().createdAt).toLocaleDateString()}
-              </time>
-            </div>
-            <div class="content" innerHTML={p().content} />
-          </article>
-        )}
-      </Show>
-    </Suspense>
+    <>
+      <header class="detail-header">
+        <A href="/">Kilokite Blog</A>
+      </header>
+      <main class="detail-main">
+        <Suspense fallback={<p class="loading">Loading…</p>}>
+          <Show when={post()} fallback={<p>Post not found.</p>}>
+            {(p) => (
+              <article class="post-detail">
+                <h1>{p().title}</h1>
+                <div class="meta">
+                  <span>{p().author?.displayName}</span>
+                  <time>
+                    {new Date(p().publishedAt ?? p().createdAt).toLocaleDateString()}
+                  </time>
+                </div>
+                <div class="content" innerHTML={p().content} />
+              </article>
+            )}
+          </Show>
+        </Suspense>
+      </main>
+    </>
   )
 }
