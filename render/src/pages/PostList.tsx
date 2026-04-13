@@ -1,6 +1,7 @@
 import { createResource, For, Suspense } from 'solid-js'
 import { useApi } from '../lib/api'
 import PostCard from '../components/PostCard'
+import Loading from '../components/Loading'
 import Sidebar from '../components/sidebar/Sidebar'
 import './PostList.scss'
 
@@ -16,7 +17,7 @@ export default function PostList() {
     <>
       <section class="content-grid">
         <div class="posts-main">
-          <Suspense fallback={<p class="loading">Loading…</p>}>
+          <Suspense fallback={<Loading />}>
             <For each={data()?.posts} fallback={<p>No posts yet.</p>}>
               {(post) => <PostCard post={post} />}
             </For>

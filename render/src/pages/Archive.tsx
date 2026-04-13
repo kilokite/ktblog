@@ -1,104 +1,104 @@
-import { createResource, For, Show } from 'solid-js'
+import { createResource, For, Show, Suspense } from 'solid-js'
 import { A } from '@solidjs/router'
 import { useApi } from '../lib/api'
-import { fmtDate } from '../lib/utils'
-import type { PostCardData } from '../components/PostCard'
+import Loading from '../components/Loading'
 import Sidebar from '../components/sidebar/Sidebar'
 import './Archive.scss'
 
+type ArchivePost = {
+  slug: string
+  title: string
+  publishedAt?: string | null
+  createdAt: string
+  category?: { name: string } | null
+}
+
 type YearGroup = {
   year: number
-  months: { month: number; posts: PostCardData[] }[]
+  posts: ArchivePost[]
 }
 
-function groupByYear(posts: PostCardData[]): YearGroup[] {
-  const map = new Map<number, Map<number, PostCardData[]>>()
-
+function groupByYear(posts: ArchivePost[]): YearGroup[] {
+  const map = new Map<number, ArchivePost[]>()
   for (const p of posts) {
-    const d = new Date(p.publishedAt ?? p.createdAt)
-    const y = d.getFullYear()
-    const m = d.getMonth() + 1
-    if (!map.has(y)) map.set(y, new Map())
-    const months = map.get(y)!
-    if (!months.has(m)) months.set(m, [])
-    months.get(m)!.push(p)
+    const y = new Date(p.publishedAt ?? p.createdAt).getFullYear()
+    if (!map.has(y)) map.set(y, [])
+    map.get(y)!.push(p)
   }
-
   return [...map.entries()]
     .sort(([a], [b]) => b - a)
-    .map(([year, months]) => ({
-      year,
-      months: [...months.entries()]
-        .sort(([a], [b]) => b - a)
-        .map(([month, posts]) => ({ month, posts })),
-    }))
+    .map(([year, posts]) => ({ year, posts }))
 }
 
-const MONTH_NAMES = [
-  '', '一月', '二月', '三月', '四月', '五月', '六月',
-  '七月', '八月', '九月', '十月', '十一月', '十二月',
-]
+function fmtShort(raw: string) {
+  const d = new Date(raw)
+  return `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function ArchiveItem(props: { post: ArchivePost }) {
+  return (
+    <li class="archive-item">
+      <span class="item-date">
+        {fmtShort(props.post.publishedAt ?? props.post.createdAt)}
+      </span>
+      <A href={`/post/${props.post.slug}`} class="item-title">
+        {props.post.title}
+      </A>
+      <Show when={props.post.category}>
+        {(cat) => <span class="item-cat">{cat().name}</span>}
+      </Show>
+    </li>
+  )
+}
+
+function YearSection(props: { group: YearGroup }) {
+  return (
+    <div class="archive-year">
+      <div class="year-label">{props.group.year}</div>
+      <ul class="year-posts">
+        <For each={props.group.posts}>
+          {(post) => <ArchiveItem post={post} />}
+        </For>
+      </ul>
+    </div>
+  )
+}
+
+function ArchiveList(props: { posts: ArchivePost[]; total: number }) {
+  return (
+    <div class="archive-container">
+      <header class="archive-header">
+        <h1 class="archive-title">归档</h1>
+        <p class="archive-count">共 {props.total} 篇文章</p>
+      </header>
+
+      <div class="archive-list">
+        <For each={groupByYear(props.posts)}>
+          {(group) => <YearSection group={group} />}
+        </For>
+      </div>
+    </div>
+  )
+}
 
 export default function Archive() {
   const api = useApi()
   const [data] = createResource(async () => {
-    const res = await api.posts.$get({ query: { size: '100' } })
+    const res = await api.posts.$get({ query: { size: '9999' } })
     if (!res.ok) return null
     return res.json()
   })
 
-  const groups = () => {
-    const d = data()
-    return d ? groupByYear(d.posts as PostCardData[]) : []
-  }
-
   return (
-    <div class="detail-page">
-      <section class="detail-grid">
-        <main class="archive-card">
-          <header class="archive-header">
-            <h1 class="archive-title">归档</h1>
-            <Show when={data()}>
-              <p class="archive-count">共 {data()!.total} 篇文章</p>
-            </Show>
-          </header>
-
-          <div class="archive-body">
-            <div class="archive-timeline">
-              <For each={groups()}>
-                {(yearGroup) => (
-                  <div class="archive-year">
-                    <h2 class="archive-year-title">{yearGroup.year}</h2>
-                    <For each={yearGroup.months}>
-                      {(monthGroup) => (
-                        <div class="archive-month">
-                          <h3 class="archive-month-title">{MONTH_NAMES[monthGroup.month]}</h3>
-                          <ul class="archive-list">
-                            <For each={monthGroup.posts}>
-                              {(post) => (
-                                <li class="archive-item">
-                                  <span class="archive-item-date">
-                                    {fmtDate(post.publishedAt ?? post.createdAt)}
-                                  </span>
-                                  <A href={`/post/${post.slug}`} class="archive-item-link">
-                                    {post.title}
-                                  </A>
-                                </li>
-                              )}
-                            </For>
-                          </ul>
-                        </div>
-                      )}
-                    </For>
-                  </div>
-                )}
-              </For>
-            </div>
-          </div>
-        </main>
-
-        <Sidebar />
-      </section>
-    </div>
+    <section class="archive-grid">
+      <div class="archive-main">
+        <Suspense fallback={<Loading variant="archive" />}>
+          <Show when={data()}>
+            {(d) => <ArchiveList posts={d().posts} total={d().total} />}
+          </Show>
+        </Suspense>
+      </div>
+      <Sidebar />
+    </section>
   )
 }

@@ -1,0 +1,249 @@
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.sk {
+  border-radius: 6px;
+  background: var(--border);
+  background-image: linear-gradient(
+    90deg,
+    var(--border) 0%,
+    rgba(255, 255, 255, 0.45) 40%,
+    var(--border) 80%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+// ── List variant (PostCard skeletons) ──
+
+.sk-card {
+  display: flex;
+  background: var(--card-bg);
+  border-radius: 17px;
+  padding: 25px;
+  gap: 15px;
+
+  & + & {
+    margin-top: 16px;
+  }
+
+  @media (max-width: 640px) {
+    flex-direction: column-reverse;
+    padding: 16px;
+  }
+}
+
+.sk-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.sk-card-meta {
+  display: flex;
+  gap: 14px;
+}
+
+.sk-card-tag {
+  width: 60px;
+  height: 12px;
+}
+
+.sk-card-date {
+  width: 90px;
+  height: 12px;
+}
+
+.sk-card-title {
+  width: 75%;
+  height: 26px;
+  margin-top: 2px;
+}
+
+.sk-card-summary {
+  width: 100%;
+  height: 14px;
+
+  &:last-child {
+    width: 60%;
+  }
+}
+
+.sk-card-cover {
+  flex-shrink: 0;
+  width: 269px;
+  border-radius: 9px;
+  min-height: 140px;
+
+  @media (max-width: 640px) {
+    width: auto;
+    height: 180px;
+  }
+}
+
+// ── Detail variant (article skeleton) ──
+
+.sk-detail {
+  background: var(--card-bg);
+  border-radius: 17px;
+  overflow: hidden;
+}
+
+.sk-detail-header {
+  padding: 40px 40px 0;
+
+  @media (max-width: 1024px) {
+    padding: 28px 28px 0;
+  }
+
+  @media (max-width: 640px) {
+    padding: 24px 20px 0;
+  }
+}
+
+.sk-detail-meta {
+  display: flex;
+  gap: 12px;
+}
+
+.sk-detail-meta-item {
+  height: 12px;
+  width: 70px;
+
+  &:first-child {
+    width: 50px;
+  }
+}
+
+.sk-detail-title {
+  height: 32px;
+  width: 65%;
+  margin-top: 18px;
+  border-radius: 8px;
+
+  @media (max-width: 640px) {
+    height: 24px;
+  }
+}
+
+.sk-detail-cover {
+  margin: 28px 40px 0;
+  border-radius: 10px;
+  height: 320px;
+
+  @media (max-width: 1024px) {
+    margin: 24px 28px 0;
+    height: 260px;
+  }
+
+  @media (max-width: 640px) {
+    margin: 20px 20px 0;
+    height: 200px;
+  }
+}
+
+.sk-detail-body {
+  padding: 32px 40px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  @media (max-width: 1024px) {
+    padding: 24px 28px 36px;
+  }
+
+  @media (max-width: 640px) {
+    padding: 20px 20px 32px;
+  }
+}
+
+.sk-detail-line {
+  height: 14px;
+  width: 100%;
+
+  &:nth-child(2) {
+    width: 92%;
+  }
+
+  &:nth-child(3) {
+    width: 80%;
+  }
+
+  &:nth-child(5) {
+    width: 88%;
+  }
+
+  &:nth-child(6) {
+    width: 55%;
+  }
+}
+
+// ── Archive variant ──
+
+.sk-archive {
+  background: var(--card-bg);
+  border-radius: 17px;
+  padding: 48px 56px 56px;
+
+  @media (max-width: 1024px) {
+    padding: 36px 32px 40px;
+  }
+
+  @media (max-width: 640px) {
+    padding: 28px 20px 32px;
+  }
+}
+
+.sk-archive-title {
+  height: 32px;
+  width: 80px;
+  border-radius: 8px;
+}
+
+.sk-archive-count {
+  height: 14px;
+  width: 120px;
+  margin-top: 10px;
+}
+
+.sk-archive-group {
+  margin-top: 36px;
+}
+
+.sk-archive-year {
+  height: 20px;
+  width: 52px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+}
+
+.sk-archive-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+}
+
+.sk-archive-row-date {
+  width: 48px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.sk-archive-row-title {
+  height: 14px;
+  flex: 1;
+  max-width: 320px;
+
+  &:nth-child(odd) {
+    max-width: 260px;
+  }
+}

@@ -4,6 +4,7 @@ import solid from 'vite-plugin-solid'
 export default defineConfig(({ isSsrBuild }) => ({
   plugins: [solid({ ssr: true })],
   build: {
+    cssCodeSplit: false,
     emptyOutDir: !isSsrBuild,
   },
 }))

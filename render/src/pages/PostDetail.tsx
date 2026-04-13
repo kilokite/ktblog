@@ -2,6 +2,7 @@ import { createResource, For, Show, Suspense } from 'solid-js'
 import { useParams } from '@solidjs/router'
 import { useApi } from '../lib/api'
 import { fmtDate } from '../lib/utils'
+import Loading from '../components/Loading'
 import Sidebar from '../components/sidebar/Sidebar'
 import './PostDetail.scss'
 
@@ -21,8 +22,8 @@ export default function PostDetail() {
   return (
     <>
       <div class="detail-page">
-        <Suspense fallback={<p class="loading">Loading…</p>}>
-          <Show when={post()} fallback={<p class="loading">Post not found.</p>}>
+        <Suspense fallback={<Loading variant="detail" />}>
+          <Show when={post()} fallback={<p>Post not found.</p>}>
             {(p) => {
               const data = p()
               const dateStr = fmtDate(data.publishedAt ?? data.createdAt)

@@ -175,7 +175,7 @@
     a {
       color: var(--accent);
       text-decoration: underline;
-      text-decoration-color: rgba(170, 59, 255, 0.3);
+      text-decoration-color: var(--accent-border);
       text-underline-offset: 3px;
       transition: text-decoration-color 0.15s;
 
