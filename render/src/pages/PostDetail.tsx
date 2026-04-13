@@ -2,11 +2,14 @@ import { createResource, For, Show, Suspense } from 'solid-js'
 import { useParams } from '@solidjs/router'
 import { useApi } from '../lib/api'
 import { fmtDate } from '../lib/utils'
+import { useLayoutConfig } from '../lib/layoutConfig'
 import Loading from '../components/Loading'
 import Sidebar from '../components/sidebar/Sidebar'
 import './PostDetail.scss'
 
 export default function PostDetail() {
+  useLayoutConfig({ heroOverlap: 315, heroOverlapTablet: 250, heroOverlapMobile: 200 })
+
   const params = useParams<{ slug: string }>()
   const api = useApi()
 
@@ -20,56 +23,52 @@ export default function PostDetail() {
   )
 
   return (
-    <>
-      <div class="detail-page">
-        <Suspense fallback={<Loading variant="detail" />}>
-          <Show when={post()} fallback={<p>Post not found.</p>}>
-            {(p) => {
-              const data = p()
-              const dateStr = fmtDate(data.publishedAt ?? data.createdAt)
-              return (
-                <section class="detail-grid">
-                  <main class="detail-article">
-                    <header class="article-header">
-                      <div class="article-meta">
-                        <Show when={data.category}>
-                          {(cat) => <span class="article-category">#{cat().name}</span>}
-                        </Show>
-                        <Show when={data.tags?.length}>
-                          <For each={data.tags}>
-                            {(t) => <span class="article-tag">#{t.tag.name}</span>}
-                          </For>
-                        </Show>
-                        <Show when={data.author}>
-                        {(author) => (
-                          <div class="article-author">
-                            <span class="author-name">{author().displayName}</span>
-                          </div>
-                        )}
-                      </Show>
-                        <span class="article-date">{dateStr}</span>
-                      </div>
-                      <h1 class="article-title">{data.title}</h1>
-                    </header>
-
-                    <Show when={data.coverUrl}>
-                      {(url) => (
-                        <figure class="article-cover">
-                          <img src={url()} alt="" />
-                        </figure>
-                      )}
+    <Suspense fallback={<Loading variant="detail" />}>
+      <Show when={post()} fallback={<p>Post not found.</p>}>
+        {(p) => {
+          const data = p()
+          const dateStr = fmtDate(data.publishedAt ?? data.createdAt)
+          return (
+            <section class="detail-grid">
+              <main class="detail-article">
+                <header class="article-header">
+                  <div class="article-meta">
+                    <Show when={data.category}>
+                      {(cat) => <span class="article-category">#{cat().name}</span>}
                     </Show>
+                    <Show when={data.tags?.length}>
+                      <For each={data.tags}>
+                        {(t) => <span class="article-tag">#{t.tag.name}</span>}
+                      </For>
+                    </Show>
+                    {/* <Show when={data.author}>
+                      {(author) => (
+                        <div class="article-author">
+                          <span class="author-name">{author().displayName}</span>
+                        </div>
+                      )}
+                    </Show> */}
+                    <span class="article-date">{dateStr}</span>
+                  </div>
+                  <h1 class="article-title">{data.title}</h1>
+                </header>
 
-                    <div class="article-body" innerHTML={data.content} />
-                  </main>
+                <Show when={data.coverUrl}>
+                  {(url) => (
+                    <figure class="article-cover">
+                      <img src={url()} alt="" />
+                    </figure>
+                  )}
+                </Show>
 
-                  <Sidebar />
-                </section>
-              )
-            }}
-          </Show>
-        </Suspense>
-      </div>
-    </>
+                <div class="article-body" innerHTML={data.content} />
+              </main>
+
+              <Sidebar />
+            </section>
+          )
+        }}
+      </Show>
+    </Suspense>
   )
 }
