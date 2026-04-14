@@ -1,7 +1,6 @@
 import { createResource, For, Show, Suspense } from 'solid-js'
 import { A } from '@solidjs/router'
 import { useApi } from '../lib/api'
-import { useLayoutConfig } from '../lib/layoutConfig'
 import Loading from '../components/Loading'
 import Sidebar from '../components/sidebar/Sidebar'
 import './Archive.scss'
@@ -83,8 +82,6 @@ function ArchiveList(props: { posts: ArchivePost[]; total: number }) {
 }
 
 export default function Archive() {
-  useLayoutConfig({ heroOverlap: 219, heroOverlapTablet: 160, heroOverlapMobile: 120 })
-
   const api = useApi()
   const [data] = createResource(async () => {
     const res = await api.posts.$get({ query: { size: '9999' } })

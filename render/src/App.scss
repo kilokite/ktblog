@@ -92,6 +92,41 @@
   transition: margin-top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+// --- Layout variants (hero-title height + page-content overlap) ---
+// desktop: hero 635px, nav 54px
+// tablet:  hero 480px, nav 54px
+// mobile:  hero 380px, nav 54px
+
+.layout-default {
+  .hero-title { height: 362px; }           // 635 - 219 - 54
+  .page-content { margin-top: -219px; }
+
+  @media (max-width: 1024px) {
+    .hero-title { height: 266px; }         // 480 - 160 - 54
+    .page-content { margin-top: -160px; }
+  }
+
+  @media (max-width: 640px) {
+    .hero-title { height: 206px; }         // 380 - 120 - 54
+    .page-content { margin-top: -120px; }
+  }
+}
+
+.layout-detail {
+  .hero-title { height: 265px; }           // 635 - 316 - 54
+  .page-content { margin-top: -316px; }
+
+  @media (max-width: 1024px) {
+    .hero-title { height: 176px; }         // 480 - 250 - 54
+    .page-content { margin-top: -250px; }
+  }
+
+  @media (max-width: 640px) {
+    .hero-title { height: 126px; }         // 380 - 200 - 54
+    .page-content { margin-top: -200px; }
+  }
+}
+
 // Page Transitions
 .fade-enter-active,
 .fade-exit-active {

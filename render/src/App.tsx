@@ -1,20 +1,19 @@
 import type { RouteSectionProps } from "@solidjs/router";
-import { Suspense, type ParentProps } from "solid-js";
+import { useLocation } from "@solidjs/router";
+import { createMemo, Suspense, type ParentProps } from "solid-js";
 import { isServer } from "solid-js/web";
 import { Transition } from "solid-transition-group";
 import NavBar from "./components/NavBar";
 import { HERO_IMG } from "./lib/constants";
-import { LayoutConfigProvider, useLayoutConfig } from "./lib/layoutConfig";
+import { getLayoutConfig } from "./lib/layoutConfig";
 import "./App.scss";
 
 function HeroSection() {
-	const { titleHeight } = useLayoutConfig();
-
 	return (
 		<section class="hero">
 			<img class="hero-bg" src={HERO_IMG} alt="" />
 			<div class="hero-overlay">
-				<div class="hero-title" style={{ height: `${titleHeight()}px` }}>
+				<div class="hero-title">
 					<h1>
 						Kilokite Bl<span class="hero-title-accent">o</span>g
 					</h1>
@@ -26,10 +25,8 @@ function HeroSection() {
 }
 
 function PageContent(props: ParentProps) {
-	const { overlap } = useLayoutConfig();
-
 	return (
-		<div class="page-content" style={{ "margin-top": `-${overlap()}px` }}>
+		<div class="page-content">
 			<Suspense>
 				{isServer ? (
 					props.children
@@ -44,11 +41,14 @@ function PageContent(props: ParentProps) {
 }
 
 export default function App(props: RouteSectionProps) {
+	const location = useLocation();
+	const config = createMemo(() => getLayoutConfig(location.pathname));
+
 	return (
-		<LayoutConfigProvider>
+		<div class={config().className}>
 			<NavBar />
 			<HeroSection />
 			<PageContent>{props.children}</PageContent>
-		</LayoutConfigProvider>
+		</div>
 	);
 }
