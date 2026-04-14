@@ -1,5 +1,7 @@
 import { createSignal, onCleanup, onMount } from 'solid-js'
 import { A, useLocation } from '@solidjs/router'
+import { For } from 'solid-js'
+import { useSiteConfig } from '../lib/site-config'
 import './NavBar.scss'
 
 const SCROLL_THRESHOLD = 8
@@ -9,6 +11,7 @@ export default function NavBar() {
   const [scrolled, setScrolled] = createSignal(false)
   const [compact, setCompact] = createSignal(false)
   const location = useLocation()
+  const siteConfig = useSiteConfig()
   const isPostPage = () => location.pathname.startsWith('/post/')
 
   onMount(() => {
@@ -43,13 +46,16 @@ export default function NavBar() {
   return (
     <nav classList={{ nav: true, 'nav--scrolled': scrolled(), 'nav--compact': compact() }}>
       <A href="/" class="nav-brand">
-        <span class="brand-text">Kilokite</span>
+        <span class="brand-text">{siteConfig().renderUi.nav.brandLabel}</span>
       </A>
       <div class="nav-links">
-        <A href="/" class="nav-link">首页</A>
-        <A href="/archive" class="nav-link">归档</A>
-        <A href="/" class="nav-link">友链</A>
-        <A href="/" class="nav-link">关于</A>
+        <For each={siteConfig().renderUi.nav.links}>
+          {(link) => (
+            <A href={link.href} class="nav-link">
+              {link.label}
+            </A>
+          )}
+        </For>
       </div>
       <div class="nav-actions">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

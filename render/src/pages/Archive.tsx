@@ -1,6 +1,7 @@
 import { createResource, For, Show, Suspense } from 'solid-js'
 import { A } from '@solidjs/router'
 import { useApi } from '../lib/api'
+import { useSiteConfig } from '../lib/site-config'
 import Loading from '../components/Loading'
 import Sidebar from '../components/sidebar/Sidebar'
 import './Archive.scss'
@@ -65,11 +66,16 @@ function YearSection(props: { group: YearGroup }) {
 }
 
 function ArchiveList(props: { posts: ArchivePost[]; total: number }) {
+  const siteConfig = useSiteConfig()
+  const archiveConfig = () => siteConfig().renderUi.pages.archive
+  const countText = () =>
+    archiveConfig().countTemplate.replaceAll('{{count}}', String(props.total))
+
   return (
     <div class="archive-container">
       <header class="archive-header">
-        <h1 class="archive-title">归档</h1>
-        <p class="archive-count">共 {props.total} 篇文章</p>
+        <h1 class="archive-title">{archiveConfig().title}</h1>
+        <p class="archive-count">{countText()}</p>
       </header>
 
       <div class="archive-list">

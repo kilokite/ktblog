@@ -1,11 +1,13 @@
-import { AVATAR_IMG } from '../../lib/constants'
+import { useSiteConfig } from '../../lib/site-config'
 import './NowPlayingCard.scss'
 
 export default function NowPlayingCard() {
+  const siteConfig = useSiteConfig()
+
   return (
     <div class="now-playing-card">
-      <img class="now-playing-bg" src={AVATAR_IMG} alt="" />
-      <span class="now-playing-label">Now Playing</span>
+      <img class="now-playing-bg" src={siteConfig().avatarUrl} alt="" />
+      <span class="now-playing-label">{siteConfig().renderUi.sidebar.nowPlayingLabel}</span>
       <div class="now-playing-controls">
         <svg viewBox="0 0 10 12" width="10" height="12" fill="currentColor">
           <rect x="0" y="2" width="2" height="8" />

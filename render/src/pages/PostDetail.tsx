@@ -1,6 +1,7 @@
 import { createResource, For, Show, Suspense } from 'solid-js'
 import { useParams } from '@solidjs/router'
 import { useApi } from '../lib/api'
+import { useSiteConfig } from '../lib/site-config'
 import { fmtDate } from '../lib/utils'
 import Loading from '../components/Loading'
 import Sidebar from '../components/sidebar/Sidebar'
@@ -9,6 +10,7 @@ import './PostDetail.scss'
 export default function PostDetail() {
   const params = useParams<{ slug: string }>()
   const api = useApi()
+  const siteConfig = useSiteConfig()
 
   const [post] = createResource(
     () => params.slug,
@@ -23,7 +25,7 @@ export default function PostDetail() {
     <section class="detail-grid">
       <main class="detail-article">
         <Suspense fallback={<Loading variant="detail" />}>
-          <Show when={post()} fallback={<p>Post not found.</p>}>
+          <Show when={post()} fallback={<p>{siteConfig().renderUi.messages.postNotFound}</p>}>
             {(p) => {
               const data = p()
               const dateStr = fmtDate(data.publishedAt ?? data.createdAt)

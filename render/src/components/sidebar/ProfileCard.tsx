@@ -1,14 +1,16 @@
-import { AVATAR_IMG } from '../../lib/constants'
+import { useSiteConfig } from '../../lib/site-config'
 import './ProfileCard.scss'
 
 export default function ProfileCard() {
+  const siteConfig = useSiteConfig()
+
   return (
     <div class="profile-card">
       <div class="profile-header">
-        <img class="profile-avatar" src={AVATAR_IMG} alt="avatar" />
+        <img class="profile-avatar" src={siteConfig().avatarUrl} alt={siteConfig().nickname} />
         <div class="profile-info">
-          <span class="profile-name">Kilokite</span>
-          <span class="profile-bio">想吃人想吃人想吃人想吃人想吃</span>
+          <span class="profile-name">{siteConfig().nickname}</span>
+          <span class="profile-bio">{siteConfig().description}</span>
         </div>
       </div>
       <div class="profile-social">

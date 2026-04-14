@@ -1,17 +1,8 @@
-import { z } from 'zod/v4'
 import { prisma } from './prisma.js'
-
-export const siteConfigSchema = z.object({
-  siteName: z.string().default(''),
-  siteSlug: z.string().default(''),
-  nickname: z.string().default(''),
-  avatarUrl: z.string().default(''),
-  description: z.string().default(''),
-  footerText: z.string().default(''),
-  customHtml: z.string().default(''),
-})
-
-export type SiteConfig = z.infer<typeof siteConfigSchema>
+import {
+  siteConfigSchema,
+  type SiteConfig,
+} from './site-config-schema.js'
 
 export const siteConfigPatchSchema = siteConfigSchema.partial()
 
@@ -24,6 +15,8 @@ export async function updateSiteConfig(
   patch: Partial<SiteConfig>,
 ): Promise<SiteConfig> {
   const current = await getSiteConfig()
+  // 这里只做浅合并，嵌套对象（例如 renderUi）会被整体替换。
+  // 调用方应尽量传入完整对象，避免丢失嵌套字段。
   const merged = { ...current, ...patch }
   const validated = siteConfigSchema.parse(merged)
   await prisma.siteConfig.upsert({
