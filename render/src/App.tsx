@@ -3,6 +3,7 @@ import { useLocation } from "@solidjs/router";
 import { createMemo, Suspense, type ParentProps } from "solid-js";
 import { isServer } from "solid-js/web";
 import { Transition } from "solid-transition-group";
+import Footer from "./components/Footer";
 import NavBar from "./components/NavBar";
 import { HERO_IMG } from "./lib/constants";
 import { getLayoutConfig } from "./lib/layoutConfig";
@@ -49,6 +50,7 @@ export default function App(props: RouteSectionProps) {
 			<NavBar />
 			<HeroSection />
 			<PageContent>{props.children}</PageContent>
+			<Footer />
 		</div>
 	);
 }

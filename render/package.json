@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && vite build --ssr src/server-index.tsx",
+    "build:watch": "concurrently \"vite build --watch\" \"vite build --ssr src/server-index.tsx --watch\"",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.12.0",
+    "concurrently": "^9.2.1",
     "sass": "^1.99.0",
     "typescript": "~5.9.3",
     "vite": "^8.0.1",
