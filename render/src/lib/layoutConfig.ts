@@ -6,6 +6,7 @@ const LAYOUT_CONFIGS: Record<string, LayoutConfig> = {
 	"/":           { className: "layout-default" },
 	"/post/:slug": { className: "layout-detail" },
 	"/archive":    { className: "layout-default" },
+	"/profile":    { className: "layout-profile" },
 };
 
 const DEFAULT_CONFIG: LayoutConfig = { className: "layout-default" };

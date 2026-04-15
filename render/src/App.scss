@@ -2,6 +2,7 @@
   position: relative;
   height: 635px;
   overflow: hidden;
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   .hero-bg {
     position: absolute;
@@ -30,7 +31,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease,
+                visibility 0.3s ease;
 
     h1 {
       font-family: var(--heading);
@@ -124,6 +127,44 @@
   @media (max-width: 640px) {
     .hero-title { height: 126px; }         // 380 - 200 - 54
     .page-content { margin-top: -200px; }
+  }
+}
+
+.layout-profile {
+  .hero {
+    height: 100vh;
+  }
+
+  .hero-title {
+    height: 362px;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .page-content {
+    margin-top: calc(-100vh + 54px);
+    visibility: hidden;
+    transform: translateY(20px);
+    animation: profile-content-in 0.3s ease 0.4s forwards;
+  }
+
+  @media (max-width: 1024px) {
+    .hero-title { height: 266px; }
+  }
+
+  @media (max-width: 640px) {
+    .hero-title { height: 206px; }
+  }
+}
+
+@keyframes profile-content-in {
+  from {
+    visibility: visible;
+    transform: translateY(20px);
+  }
+  to {
+    visibility: visible;
+    transform: translateY(0);
   }
 }
 

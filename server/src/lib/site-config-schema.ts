@@ -48,6 +48,31 @@ const DEFAULT_ARCHIVE_PAGE = {
   countTemplate: '共 {{count}} 篇文章',
 }
 
+export const profileItemSchema = z.object({
+  symbol: z.string(),
+  color: z.string(),
+  title: z.string(),
+  description: z.string(),
+  link: z.string(),
+})
+
+export const profileTagSchema = z.object({
+  symbol: z.string(),
+  text: z.string(),
+  color: z.string(),
+})
+
+export const profileContentBlockSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('item-list'), items: z.array(profileItemSchema) }),
+  z.object({ type: z.literal('tag-list'), tags: z.array(profileTagSchema) }),
+  z.object({ type: z.literal('title'), text: z.string() }),
+])
+
+const DEFAULT_PROFILE_PAGE = {
+  backgroundUrl: '',
+  content: [] as z.infer<typeof profileContentBlockSchema>[],
+}
+
 const DEFAULT_MESSAGES = {
   noPosts: 'No posts yet.',
   postNotFound: 'Post not found.',
@@ -68,6 +93,7 @@ const DEFAULT_RENDER_UI = {
   },
   pages: {
     archive: DEFAULT_ARCHIVE_PAGE,
+    profile: DEFAULT_PROFILE_PAGE,
   },
   messages: DEFAULT_MESSAGES,
 }
@@ -96,6 +122,10 @@ export const renderUiSchema = z.object({
       title: z.string().default('归档'),
       countTemplate: z.string().default('共 {{count}} 篇文章'),
     }).default(DEFAULT_ARCHIVE_PAGE),
+    profile: z.object({
+      backgroundUrl: z.string().default(''),
+      content: z.array(profileContentBlockSchema).default([]),
+    }).default(DEFAULT_PROFILE_PAGE),
   }).default(DEFAULT_RENDER_UI.pages),
   messages: z.object({
     noPosts: z.string().default('No posts yet.'),
@@ -115,6 +145,9 @@ export const siteConfigSchema = z.object({
 
 export type SiteLink = z.infer<typeof siteLinkSchema>
 export type FeaturedLink = z.infer<typeof featuredLinkSchema>
+export type ProfileItem = z.infer<typeof profileItemSchema>
+export type ProfileTag = z.infer<typeof profileTagSchema>
+export type ProfileContentBlock = z.infer<typeof profileContentBlockSchema>
 export type RenderUiConfig = z.infer<typeof renderUiSchema>
 export type SiteConfig = z.infer<typeof siteConfigSchema>
 

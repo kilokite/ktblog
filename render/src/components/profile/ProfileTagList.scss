@@ -1,0 +1,26 @@
+.profile-tag-list {
+  display: flex;
+  gap: 8px;
+  margin-left: 16px;
+  flex-wrap: wrap;
+}
+
+.profile-tag {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(20px) brightness(1);
+  border-radius: calc(infinity * 1px);
+  padding: 15px;
+}
+
+.profile-tag-symbol {
+  font-size: 15px;
+  margin-right: 8px;
+}
+
+.profile-tag-text {
+  font-weight: 700;
+  font-size: 14px;
+}

@@ -66,9 +66,11 @@ const posts = new Hono()
     const page = Math.max(1, Number(c.req.query('page') ?? 1))
     const size = Math.min(100, Math.max(1, Number(c.req.query('size') ?? 20)))
     const pub = c.req.query('published')
+    const search = c.req.query('search')
 
     const where = {
       ...(pub !== undefined && { published: pub === 'true' }),
+      ...(search && { title: { contains: search } }),
     }
 
     const [posts, total] = await Promise.all([

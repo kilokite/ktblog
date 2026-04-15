@@ -1,34 +1,30 @@
 <template>
-	<div>
-		<h1>Hello, World! about</h1>
-		<router-link to="/">Home</router-link>
-		<v-btn @click="goHome">Go Home</v-btn>
-		<v-btn @click="$uigo('/')">Go Home</v-btn>
-		<div>
-			<v-text-field v-model="input" label="Input" />
-			<v-btn @click="hello">Hello</v-btn>
-			<v-btn v-if="ff">ciallo</v-btn>
+	<div class="pa-4">
+		<span class="text-h6">选择器测试</span>
+		<v-divider class="my-4" />
+
+		<v-btn color="primary" prepend-icon="mdi-file-document-outline" @click="showPostSelector = true">
+			选择文章
+		</v-btn>
+
+		<div v-if="selected" class="mt-4">
+			<v-chip closable @click:close="selected = null">
+				{{ selected.title }} ({{ selected.slug }})
+			</v-chip>
 		</div>
+
+		<PostSelector v-model="showPostSelector" @select="onPostSelected" />
 	</div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { uigo } from "../easyKit";
-import { api } from "../server";
-const input = ref("");
-const ff = ref(false)
-async function hello() {
-	try {
-		const res = await api.hello2.$get({ query: { input: input.value } });
-		const data = await res.json();
-		input.value = data.message;
-	} catch (error) {
-		alert(error);
-	}
+import PostSelector from "../components/selector/PostSelector.vue";
+
+const showPostSelector = ref(false);
+const selected = ref<{ id: string; title: string; slug: string } | null>(null);
+
+function onPostSelected(post: { id: string; title: string; slug: string }) {
+	selected.value = post;
 }
-function goHome() {
-	uigo("/");
-}
-//错误处理
 </script>
