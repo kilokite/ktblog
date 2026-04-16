@@ -5,6 +5,7 @@ packages:
   - share_assets
 
 onlyBuiltDependencies:
+  - '@parcel/watcher'
   - '@prisma/engines'
   - esbuild
   - prisma

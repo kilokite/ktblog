@@ -50,7 +50,7 @@ model AuthToken {
 model Post {
   id          String    @id @default(cuid())
   title       String    @db.VarChar(255)
-  slug        String    @unique @db.VarChar(255)
+  slug        String    @unique @db.VarChar(191)
   content     String    @db.LongText
   summary     String?   @db.VarChar(512)
   coverUrl    String?   @map("cover_url") @db.VarChar(512)
@@ -112,7 +112,7 @@ model PostTag {
 model Series {
   id          String  @id @default(cuid())
   title       String  @db.VarChar(255)
-  slug        String  @unique @db.VarChar(255)
+  slug        String  @unique @db.VarChar(191)
   description String? @db.VarChar(512)
   posts       Post[]
 

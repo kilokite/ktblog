@@ -7,7 +7,7 @@ import { userPublicSelect } from '../lib/select.js'
 
 const createSchema = z.object({
   title: z.string().min(1),
-  slug: z.string().min(1),
+  slug: z.string().min(1).max(180),
   content: z.string(),
   summary: z.string().optional(),
   coverUrl: z.string().optional(),
